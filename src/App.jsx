@@ -60,86 +60,116 @@ function App() {
 
   return (
     <>
-      <section id="center">
-        <div className='w-100 p-3'>
-          <h2>Income Inputs</h2>
-          <Form onSubmit={submit}>
-            <Form.Group className="mb-3 d-flex ">
-              <Form.Label className='me-2'>Select Month</Form.Label>
-              <Form.Select className='w-25 mb-3' aria-label="Default select example" onChange={(e)=>{setRecord({...record, month: e.target.value})}}>
-                {
-                  months.map((month, index) => {
-                    return <option key={index} value={month}>{month}</option>
-                  })
-                }
+      <div className="container py-5">
+    
+    {/* FORM SECTION */}
+    <div className="card shadow-lg border-0 mb-5">
+      <div className="card-body p-4">
+        <h3 className="mb-4 fw-bold text-primary">Income Tracker</h3>
+
+        <Form onSubmit={submit}>
+          
+          <div className="row mb-3">
+            <div className="col-md-6">
+              <Form.Label>Month</Form.Label>
+              <Form.Select 
+                className="form-control-modern"
+                onChange={(e)=>{setRecord({...record, month: e.target.value})}}
+              >
+                {months.map((month, index) => (
+                  <option key={index} value={month}>{month}</option>
+                ))}
               </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3 d-flex " controlId="formBasicEmail ">
-              <Form.Label className='me-2'>Select Platform</Form.Label>
-              <Form.Select className='w-25 mb-3' aria-label="Default select example" onChange={(e)=>{setRecord({...record, platform: e.target.value})}}>
-                {
-                  platforms.map((platform, index) => {
-                    return <option key={index} value={platform}>{platform}</option>
-                  })
-                }
+            </div>
+
+            <div className="col-md-6">
+              <Form.Label>Platform</Form.Label>
+              <Form.Select 
+                className="form-control-modern"
+                onChange={(e)=>{setRecord({...record, platform: e.target.value})}}
+              >
+                {platforms.map((platform, index) => (
+                  <option key={index} value={platform}>{platform}</option>
+                ))}
               </Form.Select>
-            </Form.Group>
-            <Form.Group className="mb-3 d-flex " controlId="formBasicEmail ">
-              <Form.Label className='me-2'>Record Data</Form.Label>
-              <Form.Control className='me-2' type="number" placeholder="Enter Income" value={record.income} onChange={(e)=>setRecord({...record, income: Number(e.target.value)})} />
-              <Form.Control className='me-2' type="number" placeholder="Enter Deduction" value={record.deduction} onChange={(e)=>setRecord({...record, deduction: Number(e.target.value)})} />
-              <Form.Control type="number" disabled value={getDeductions(record.income, record.deduction)} />
-            </Form.Group>
-            
-            
-            
+            </div>
+          </div>
 
-            
-            <Button variant="primary" type="submit">
-              Save
-            </Button>
-          </Form>
-        </div>
-      </section>
+          <div className="row mb-4">
+            <div className="col-md-4">
+              <Form.Label>Income</Form.Label>
+              <Form.Control
+                type="number"
+                className="form-control-modern"
+                placeholder="Enter Income"
+                value={record.income}
+                onChange={(e)=>setRecord({...record, income: Number(e.target.value)})}
+              />
+            </div>
 
-      <div className="ticks"></div>
+            <div className="col-md-4">
+              <Form.Label>Deduction</Form.Label>
+              <Form.Control
+                type="number"
+                className="form-control-modern"
+                placeholder="Enter Deduction"
+                value={record.deduction}
+                onChange={(e)=>setRecord({...record, deduction: Number(e.target.value)})}
+              />
+            </div>
 
-      <section id="next-steps" id="center">
-        <div className='w-100 p-3'>
-                <h1>Past Income History</h1>
-        <Table>
+            <div className="col-md-4">
+              <Form.Label>Total</Form.Label>
+              <Form.Control
+                type="number"
+                disabled
+                className="form-control-modern bg-light fw-bold"
+                value={getDeductions(record.income, record.deduction)}
+              />
+            </div>
+          </div>
+
+          <Button variant="primary" className="px-4 py-2 fw-semibold">
+            Save Record
+          </Button>
+
+        </Form>
+      </div>
+    </div>
+
+    {/* TABLE SECTION */}
+    <div className="card shadow-lg border-0">
+      <div className="card-body p-4">
+        <h4 className="mb-4 fw-bold text-dark">Income History</h4>
+
+        <Table hover responsive className="modern-table align-middle">
           <thead>
             <tr>
-               <th>Record Id</th>
-                <th>Month</th>
-                <th>Platform</th>
-                <th>Income</th>
-                <th>Deduction</th>
-                <th>Total</th>
+              <th>ID</th>
+              <th>Month</th>
+              <th>Platform</th>
+              <th>Income</th>
+              <th>Deduction</th>
+              <th>Total</th>
             </tr>
-               
           </thead>
           <tbody>
-                {
-                  history?.map((r,i)=>{
-                    return <tr key={r.id}>
-                      <td>{r.id}</td>
-                      <td>{r.month}</td>
-                      <td>{r.platform}</td>
-                      <td>{r.income}</td>
-                      <td>{r.deductions}</td>
-                      <td>{r.record_total}</td>
-                    </tr>
-                  })
-                }
+            {history?.map((r) => (
+              <tr key={r.id}>
+                <td>{r.id}</td>
+                <td className="text-capitalize">{r.month}</td>
+                <td>{r.platform}</td>
+                <td className="text-success fw-semibold">Rs {r.income}</td>
+                <td className="text-danger">Rs {r.deductions}</td>
+                <td className="fw-bold text-primary">Rs {r.record_total}</td>
+              </tr>
+            ))}
           </tbody>
         </Table>
-        </div>
-        
-      </section>
+      </div>
+    </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+  </div>
     </>
   )
 }
