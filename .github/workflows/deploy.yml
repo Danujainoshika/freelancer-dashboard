@@ -5,16 +5,19 @@ on:
     branches:
       - main
 
-  concurrency:
-    group: "deploy-frontend-main"
-    cancel-in-progress: true
+concurrency:
+  group: deploy-frontend-main
+  cancel-in-progress: true
 
-  jobs:
-    deploy:
-      runs-on: ubuntu-latest
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-      steps:
-        -name: deploy fronted to EC2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
@@ -23,15 +26,31 @@ on:
         run: |
           set -e
 
+          echo "Setting up SSH..."
           mkdir -p ~/.ssh
           echo "$EC2_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+
           ssh-keyscan -p $EC2_PORT -H $EC2_HOST >> ~/.ssh/known_hosts
 
+          echo "Connecting to EC2 and deploying..."
+
           ssh -i ~/.ssh/deploy_key -p $EC2_PORT $EC2_USER@$EC2_HOST << 'EOF'
+            set -e
+
             cd /home/ubuntu/freelancer-dashboard
+
+            echo "Pulling latest code..."
             git pull origin main
+
+            echo "Installing dependencies..."
             npm install
+
+            echo "Building project..."
             npm run build
+
+            echo "Restarting Nginx..."
+            sudo systemctl restart nginx
+
+            echo "Deployment complete!"
           EOF
-        
