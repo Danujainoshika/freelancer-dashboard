@@ -129,7 +129,7 @@ function App() {
             </div>
           </div>
 
-          <Button variant="primary" className="px-4 py-2 fw-semibold">
+          <Button variant="primary" className="px-4 py-2 fw-semibold" type="submit" >
             Save Record
           </Button>
 
